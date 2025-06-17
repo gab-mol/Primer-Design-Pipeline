@@ -1,5 +1,7 @@
-GENES = ["matk"]
-GENERA = ["viola"]
+configfile: "config/config.yml"
+
+GENES = config["genes"]
+GENERA = config["genera"]
 
 rule all:
     input:
