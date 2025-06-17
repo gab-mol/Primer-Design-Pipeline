@@ -1,24 +1,20 @@
 '''
-Paso vital para alimentar `primer3_core`.
-
-Eliminar ambiguedades (marcadascomo "n" en consenso).
-Generar el archivo input con formato correcto para el 
-comando de Primer3.
+Prepare input file for `primer3_core`.
+Disambiguate (n) in sequence.
 '''
 from Bio import SeqIO
-from os.path import dirname, join, exists, abspath
 
-DIR = join(dirname(__file__), "..", "data")
-CONS_PATH = join(DIR, "viola_cons.fasta")
-PRIM_INPUT_PATH = join(DIR, "viola_primer_input.txt")
+snk = snakemake # type: ignore
+CONS_PATH = snk.input[0]
+PRIM_INPUT_PATH = snk.output[0]
 
-registro = SeqIO.read(CONS_PATH, "fasta")
-secuencia = str(registro.seq).upper().replace("N", "")  # remover Ns
-secuencia = secuencia.replace("\n", "").replace("\r", "")
+cons = SeqIO.read(CONS_PATH, "fasta")
+sequence = str(cons.seq).upper().replace("N", "")
+sequence = sequence.replace("\n", "").replace("\r", "")
 
 with open(PRIM_INPUT_PATH, "w") as f:
-    f.write(f"""SEQUENCE_ID={registro.id}
-SEQUENCE_TEMPLATE={secuencia}
+    f.write(f"""SEQUENCE_ID={cons.id}
+SEQUENCE_TEMPLATE={sequence}
 PRIMER_TASK=generic
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_RIGHT_PRIMER=1
