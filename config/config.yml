@@ -1,2 +1,10 @@
-genes: ["matk"]
-genera: ["viola"]
+entrez:
+  genes: ["matk"]
+  organisms: ["viola"]
+  min_len: 200
+  max_len: 2000
+primer3:
+  PRIMER_OPT_SIZE: 20
+  PRIMER_MIN_SIZE: 18
+  PRIMER_MAX_SIZE: 24
+  PRIMER_PRODUCT_SIZE_RANGE: "100-300"

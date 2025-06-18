@@ -1,54 +1,55 @@
 configfile: "config/config.yml"
 
-GENES = config["genes"]
-GENERA = config["genera"]
+terms = config["entrez"]
+GENES = terms["genes"]
+ORGANISMS = terms["organisms"]
 
 rule all:
     input:
-        expand("data/{gen}_{gene}_primers.txt", gen=GENERA, gene=GENES)
+        expand("data/{org}_{gene}_primers.txt", org=ORGANISMS, gene=GENES)
 
 rule exploration:
     output: 
-        "data/ids_{gen}_{gene}.json"
+        "data/ids_{org}_{gene}.json"
     script:
         "scripts/exploration.py"
 
 rule download:
     output:
-        "data/{gen}_{gene}_seqs.fasta"
+        "data/{org}_{gene}_seqs.fasta"
     input: 
-        "data/ids_{gen}_{gene}.json"
+        "data/ids_{org}_{gene}.json"
     script:
         "scripts/download.py"
 
 rule alignment:
     output:
-        "data/{gen}_{gene}_seqs_align.fasta"
+        "data/{org}_{gene}_seqs_align.fasta"
     input:
-        "{gen}_{gene}_seqs.fasta"
+        "{org}_{gene}_seqs.fasta"
     shell:
         "clustalo -i {input} -o {output} --auto --verbose"
 
 rule consensus:
     output:
-        "data/{gen}_{gene}_cons.fasta"
+        "data/{org}_{gene}_cons.fasta"
     input:
-        "data/{gen}_{gene}_seqs_align.fasta"
+        "data/{org}_{gene}_seqs_align.fasta"
     shell:
         "em_cons -sequence {input} -outseq {output} -name {wildcards.gen}_{wildcards.gene}_consensus"
 
 rule primerinput:
     output:
-        "data/{gen}_{gene}_primer_input.txt"
+        "data/{org}_{gene}_primer_input.txt"
     input:
-        "data/{gen}_{gene}_cons.fasta"
+        "data/{org}_{gene}_cons.fasta"
     script:
         "scripts/primerinput.py"
 
 rule primer:
     output:
-        "data/{gen}_{gene}_primers.txt"
+        "data/{org}_{gene}_primers.txt"
     input:
-        "data/{gen}_{gene}_primer_input.txt"
+        "data/{org}_{gene}_primer_input.txt"
     shell:
         "primer3_core < {input} > {output}"

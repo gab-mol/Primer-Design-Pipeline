@@ -1,8 +1,5 @@
 '''
 Search for conserved sequences for Viola spp. in NCBI-nucleotide.
-
-Selected sequence: "matK" (Maturase K)
-Plastidial gene for intron maturase, a protein essential for the in vivo splicing of Group II introns.
 '''
 from Bio import Entrez
 import os
@@ -14,10 +11,21 @@ Entrez.email = os.getenv("email")
 
 snk = snakemake # type: ignore
 ID_PATH = snk.output[0]
+search_args = snk.config["entrez"]
 
-# NCBI search term
-term = 'Viola[Organism] AND matk[Gene] AND ("200"[SLEN] : "2000"[SLEN])'
-stream = Entrez.esearch(db="nucleotide", term=term, retmax=20)
+genes = search_args["genes"]
+organisms = search_args["organisms"]
+min_len = search_args["min_len"]
+max_len = search_args["max_len"]
+
+# NCBI search term(s)
+terms = [
+    f"{organism}[Organism] AND {gene}[Gene] AND (\"{min_len}\"[SLEN] : \"{max_len}\"[SLEN])"
+    for organism in organisms
+    for gene in genes
+]
+
+stream = Entrez.esearch(db="nucleotide", term=terms, retmax=20)
 record = Entrez.read(stream)
 stream.close()
 ids = record["IdList"]
