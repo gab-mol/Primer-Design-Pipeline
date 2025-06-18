@@ -36,6 +36,8 @@ primer3:
   PRIMER_PRODUCT_SIZE_RANGE:  # "min-max" (str) range of amplicon
 
 ```
+### `email` enviroment variable (in **.env**)
+Remember to include a **.env** file in your root directory with the environment variable `email="yourmail@example.com"` for the pipeline to work. This is required by NCBI when submitting queries. 
 
 ## Data Pipeline
 Design candidate primers based on a gene region of interest for a given taxonomic group, using NCBI resources and bioinformatics analysis tools. The pipeline automates downloading, alignment, consensus, and input into Primer3. This is achieved using a Snakefile (Snakemake packege). The DAG graph representation of the pipe defined is as follows:
