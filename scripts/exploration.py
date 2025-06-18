@@ -1,5 +1,5 @@
 '''
-Search for conserved sequences for Viola spp. in NCBI-nucleotide.
+Search in NCBI-nucleotide. Store IDs in JSON format.
 '''
 from Bio import Entrez
 from os import getenv, mkdir
