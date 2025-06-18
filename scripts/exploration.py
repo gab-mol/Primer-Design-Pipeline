@@ -2,8 +2,8 @@
 Search for conserved sequences for Viola spp. in NCBI-nucleotide.
 '''
 from Bio import Entrez
-from os import getenv
-from os.path import join, abspath
+from os import getenv, mkdir
+from os.path import join, abspath, exists
 from datetime import datetime
 import json
 import dotenv
@@ -13,19 +13,15 @@ Entrez.email = getenv("email")
 
 snk = snakemake # type: ignore
 ID_PATH = snk.output[0]
-search_args = snk.config["entrez"]
+search_args = snk.config["entrez"] 
 
-genes = search_args["genes"]
-organisms = search_args["organisms"]
-min_len = search_args["min_len"]
-max_len = search_args["max_len"]
+organism = snk.wildcards.org
+gene = snk.wildcards.gene
+min_len = int(search_args["min_len"])
+max_len = int(search_args["max_len"])
 
-# NCBI search term(s)
-terms = [
-    f"{organism}[Organism] AND {gene}[Gene] AND (\"{min_len}\"[SLEN] : \"{max_len}\"[SLEN])"
-    for organism in organisms
-    for gene in genes
-]
+# NCBI search term
+terms = f"{organism}[Organism] AND {gene}[Gene] AND (\"{min_len}\"[SLEN] : \"{max_len}\"[SLEN])"
 
 stream = Entrez.esearch(db="nucleotide", term=terms, retmax=20)
 record = Entrez.read(stream)
@@ -37,7 +33,9 @@ with open(ID_PATH, "w", encoding="UTF-8") as f:
 
 # Logging
 log_name = f"{snk.wildcards.org}_{snk.wildcards.gene}_search.log"
-PATH_INFO = abspath(join("..", "log", log_name))
+LOG_DIR = "logs"
+PATH_INFO = abspath(join(LOG_DIR, log_name))
+if not exists(LOG_DIR): mkdir(LOG_DIR)
 
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
