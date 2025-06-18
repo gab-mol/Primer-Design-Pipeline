@@ -26,7 +26,7 @@ rule alignment:
     output:
         "data/{org}_{gene}_seqs_align.fasta"
     input:
-        "{org}_{gene}_seqs.fasta"
+        "data/{org}_{gene}_seqs.fasta"
     shell:
         "clustalo -i {input} -o {output} --auto --verbose"
 
@@ -36,7 +36,7 @@ rule consensus:
     input:
         "data/{org}_{gene}_seqs_align.fasta"
     shell:
-        "em_cons -sequence {input} -outseq {output} -name {wildcards.gen}_{wildcards.gene}_consensus"
+        "em_cons -sequence {input} -outseq {output} -name {wildcards.org}_{wildcards.gene}_consensus"
 
 rule primerinput:
     output:
