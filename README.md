@@ -20,7 +20,7 @@ Python version employed: 3.11.13.
 Proyect python dependencies are listed in [**requirements.txt** ](./requirements.txt) file.  
 Biopython and Snakemake drives most of the pipeline logic.
 
-## Configuration:
+## Configuration
 
 The [**config/config.yml**](./config/config.yml) file contains parameters for the [*Viola*](https://en.wikipedia.org/wiki/Viola_(plant)) and [matK](https://en.wikipedia.org/wiki/Maturase_K) example.  
 See [**notebooks/primer_evaluation.ipynb**](./notebooks/primer_evaluation.ipynb) for sample results and an evaluation walkthrough.
@@ -57,16 +57,18 @@ The DAG (Directed Acyclic Graph) of the pipeline is illustrated below:
   <small>Example for Viola and matK</small>
 </p>
 
-#### Search Logs
-Information about each sequences retrieved for each search term (organism x gene) is saved as a separate `.log` file in the **logs/** directory.
+#### Search Logs (**logs/**)
+Information about each sequences retrieved for each search term (organism x gene) is saved as a separate `.log` file within the auto-generated **logs/** directory.
 
 ### Running the Pipeline
 From the root directory of the project, run:
 ```bash
 snakemake --core 1
 ```
-See ([official Snakemake docs](https://snakemake.readthedocs.io/en/stable/executing/cli.html)) for details.
+To execute the pipeline, you must explicitly specify the total number of CPU cores using the `--cores` option. See the [official Snakemake docs](https://snakemake.readthedocs.io/en/stable/executing/cli.html) for details.
 
+### File outputs (**data/**)
+All output files are stored in the auto-generated **data/** directory.
 
 ## Primer Evaluation 
 ### See: [notebooks/primer_evaluation.ipynb](./notebooks/primer_evaluation.ipynb)
