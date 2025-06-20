@@ -1,18 +1,15 @@
-configfile: "config/config.yml"
+configfile: "config/.cfg_validated.yml"
+
+def ensure_list(x):
+    return x if isinstance(x, list) else [x]
 
 terms = config["entrez"]
-GENES = terms["genes"]
-ORGANISMS = terms["organisms"]
+GENES = ensure_list(terms["genes"])
+ORGANISM = ensure_list(terms["organism"])
 
 rule all:
     input:
-        expand("data/{org}_{gene}_primers.txt", org=ORGANISMS, gene=GENES)
-
-rule exploration:
-    output: 
-        "data/ids_{org}_{gene}.json"
-    script:
-        "scripts/exploration.py"
+        expand("data/{org}_{gene}_primers.txt", org=ORGANISM, gene=GENES)
 
 rule download:
     output:
