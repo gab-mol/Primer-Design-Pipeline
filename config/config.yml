@@ -1,8 +1,9 @@
 entrez:
-  genes: ["matk"]
-  organisms: ["viola"]
+  genes: ["coi", "12S", "16s", "Cytb"]
+  organism: "polybetes"
   min_len: 200
   max_len: 2000
+cores: 1
 primer3:
   PRIMER_OPT_SIZE: 20
   PRIMER_MIN_SIZE: 18
