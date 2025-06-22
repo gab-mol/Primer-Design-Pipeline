@@ -66,7 +66,7 @@ The workflow is defined in the Snakefile (Snakemake).
 The DAG (Directed Acyclic Graph) of the pipeline is illustrated below:
 
 <p align="center">
-  <img src="grafo.png" alt="Pipeline DAG" width="120"><br>
+  <img src="graph.png" alt="Pipeline DAG" width="120"><br>
   <small>Example for Viola and matK</small>
 </p>
 
