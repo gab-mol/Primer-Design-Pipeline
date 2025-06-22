@@ -21,24 +21,37 @@ Proyect python dependencies are listed in [**requirements.txt** ](./requirements
 Biopython and Snakemake drives most of the pipeline logic.
 
 ## Configuration
+The pipeline is configured via the **config/config.yml** file.  
+All fields are required.
 
-The [**config/config.yml**](./config/config.yml) file contains parameters for the [*Viola*](https://en.wikipedia.org/wiki/Viola_(plant)) and [matK](https://en.wikipedia.org/wiki/Maturase_K) example.  
-See [**notebooks/primer_evaluation.ipynb**](./notebooks/primer_evaluation.ipynb) for sample results and an evaluation walkthrough.
+Currently, it supports specifying **a single organism** and **one or more gene names** (use a list for multiple genes).
+
+### Step 0 (Mandatory)
+Before running the pipeline, you must collect valid NCBI IDs by executing: **exploration.py**
+A summary of the NCBI search results will be available in the **logs/** directory, and any retrieved ID lists will be stored in the **data/** directory.
+
+Once IDs have been successfully retrieved, you may launch the pipeline using `snakemake` command, like:
+
+    snakemake --cores N
+
 
 ### config.yml fields
 ```yml
 entrez:
-  genes: # list[str] of gene names
-  organisms: # list[str] of organism names
-  min_len: # minimum sequence length (bp)
-  max_len:  # maximum sequence length (bp)
+  genes:                      # list[str] of gene names
+  organisms:                  # str name of organism 
+  min_len:                    # minimum sequence length (bp)
+  max_len:                    # maximum sequence length (bp)}
 primer3:
-  PRIMER_OPT_SIZE:  # optimal primer length (bp)
-  PRIMER_MIN_SIZE:  # minimum primer length (bp)
-  PRIMER_MAX_SIZE:  # maximum primer length (bp)
+  PRIMER_OPT_SIZE:            # optimal primer length (bp)
+  PRIMER_MIN_SIZE:            # minimum primer length (bp)
+  PRIMER_MAX_SIZE:            # maximum primer length (bp)
   PRIMER_PRODUCT_SIZE_RANGE:  # range of amplicon size, e.g., "100-300"
-
 ```
+
+As an example, a [**config/config.yml**](./config/config.yml) file is provided with parameters for the [*Viola*](https://en.wikipedia.org/wiki/Viola_(plant)) and [matK](https://en.wikipedia.org/wiki/Maturase_K).  
+See [**notebooks/primer_evaluation.ipynb**](./notebooks/primer_evaluation.ipynb) for sample results and an evaluation walkthrough.
+
 ### **.env** file and `email` environment variable
 Include a .env file in the root project directory with the following content:
 ```dotenv
