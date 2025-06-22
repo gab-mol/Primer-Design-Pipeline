@@ -10,13 +10,13 @@ import json
 import dotenv
 import yaml
 from time import sleep
-import subprocess
+# import subprocess
 
 dotenv.load_dotenv()
 Entrez.email = getenv("email")
 
 CONFIG_PATH = join("config", "config.yml")
-_CFG_V_PATH = join("config", ".cfg_validated.yml")
+# _CFG_V_PATH = join("config", ".cfg_validated.yml")
 
 founds = 0
 validated_gen: list[str] = list()
@@ -49,6 +49,8 @@ def search(organism, gene, min_len, max_len, LOG_DIR = "logs"):
         print("IDs FOUND    --  ", terms)
     else:
         print("NO RESULTS !    --  ", terms)
+    
+    print("\n")
 
     # Logging
     timestamp = datetime.now()
@@ -77,12 +79,29 @@ def search(organism, gene, min_len, max_len, LOG_DIR = "logs"):
             f.write(f"TERM:\n\t{terms}\n\n")
             f.write("\nNothing to download.\nSkipping...")
 
+def expl_finished(exit: int):
+    if exit != 0:
+        print("""
+    The Pipeline cannot be run with the current configuration. 
+    Please reconsider the organism and sequence(s) you entered,
+    and rerun this script."""
+        )
+        sys.exit(exit)
+    else:
+        print("""
+    Search terms validated. List(s) of IDs available to feed pipeline
+    It is now recommended to launch the Snakemake pipeline."""
+        )
+        sys.exit(exit)
+
 if __name__ == "__main__":
     print("""
           
-          ##################################
-          ##### Primer-Design-Pipeline #####
-          ##################################\n"""
+        ##################################
+        ##### Primer-Design-Pipeline #####
+        ----------------------------------
+            Mandatory ID collection step.
+        ##################################\n"""
     )
 
     print("Reading configuration (config/config.yml) ...\n")
@@ -105,21 +124,54 @@ if __name__ == "__main__":
             
         No sequences were found for any combination of the search terms. !!!
         
-            >>>  Aborting Pipeline execution <<<
     ''')
-        sys.exit(1)
+        expl_finished(1)
     else:
-        
-        config["entrez"]["genes"] = validated_gen
-        with open(_CFG_V_PATH, "w", encoding="UTF-8") as f:
-            yaml.dump(config, f, sort_keys=False)
+        input_gen = config["entrez"]["genes"]
 
-        print("\nLaunching Pipeline...")
-        stat_code = subprocess.run(["snakemake", "--cores", f"{ncor}"])
-
-        if stat_code.returncode == 0:
-            print("\nPipeline completed successfully.")
-            if exists(_CFG_V_PATH):
-                remove(_CFG_V_PATH)
+        if set(validated_gen) == set(input_gen):
+            print("""
+    Searching for IDs for each sequence has been completed.
+                
+    * JSON saved in data/
+    * View summary in logs/\n"""
+            )
+            expl_finished(0)
         else:
-            print("Pipeline failed !!!")
+            gen_to_remv = [g for g in input_gen if g not in validated_gen]
+
+            print("\nThe following sequences yielded no results:")
+            for g in gen_to_remv: print("\t-", g)
+            print("\n")
+            while True:
+                answer = input("\nDownload these sequences and proceed with pipeline? (y/n) >: ")
+                answer = answer.lower().strip()
+                match answer:
+                    case "y":
+                        config["entrez"]["genes"] = validated_gen
+                        try:
+                            with open(CONFIG_PATH, "w", encoding="UTF-8") as f:
+                                yaml.dump(config, f, sort_keys=False)
+                            print("Sequences dropped.")
+                        except Exception as e:
+                            print("Error modifying configuration file.\n", e)
+                        expl_finished(0)
+                    case "n":
+                        expl_finished(1)
+                    case _:
+                        print("key error. Type y for yes or n for no.\n")
+                        continue
+            
+
+        # with open(_CFG_V_PATH, "w", encoding="UTF-8") as f:
+        #     yaml.dump(config, f, sort_keys=False)
+
+        # print("\nLaunching Pipeline...")
+        # # stat_code = subprocess.run(["snakemake", "--cores", f"{ncor}"])
+        # stat_code = subprocess.run(["snakemake --dag | dot -Tpng > grafo.png", "--cores", f"{ncor}"])
+        # if stat_code.returncode == 0:
+        #     print("\nPipeline completed successfully.")
+        #     if exists(_CFG_V_PATH):
+        #         remove(_CFG_V_PATH)
+        # else:
+        #     print("Pipeline failed !!!")

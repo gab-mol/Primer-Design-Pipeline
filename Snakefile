@@ -1,4 +1,4 @@
-configfile: "config/.cfg_validated.yml"
+configfile: "config/config.yml"
 
 def ensure_list(x):
     return x if isinstance(x, list) else [x]
