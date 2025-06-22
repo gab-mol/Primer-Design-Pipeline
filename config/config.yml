@@ -1,6 +1,6 @@
 entrez:
   genes: ["matk"]
-  organisms: ["viola"]
+  organism: "viola"
   min_len: 200
   max_len: 2000
 cores: 1
