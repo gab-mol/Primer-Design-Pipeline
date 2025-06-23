@@ -108,7 +108,6 @@ if __name__ == "__main__":
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
-    ncor = int(config["cores"])
     entrez_cfg = config["entrez"]
     organism = entrez_cfg["organism"]
     genes = entrez_cfg["genes"]
