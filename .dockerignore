@@ -1,0 +1,14 @@
+data/
+logs/
+notebooks/
+graph.png
+.snakemake/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*~
+.venv/
+env/
+venv/
