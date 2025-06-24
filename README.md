@@ -40,10 +40,10 @@ primer3:
 ```
 
 ## Running
-### Step 0 (Mandatory)
+#### Step 0 (Mandatory)
 Before running the pipeline, you must collect valid NCBI IDs by executing: **`exploration.py`**.
 A summary of the NCBI search results will be available in the **logs/** directory, and any retrieved ID lists will be stored in the **data/** directory.
-
+#### Launch pipeline
 Once IDs have been successfully retrieved, you can launch the pipeline using the `snakemake` command, for example:
 
     snakemake --cores N
@@ -52,6 +52,25 @@ To execute the pipeline, you must explicitly specify the total number of CPU cor
 
 As an example, a [**config/config.yml**](./config/config.yml) file is provided with parameters for the [*Viola*](https://en.wikipedia.org/wiki/Viola_(plant)) and [matK](https://en.wikipedia.org/wiki/Maturase_K).  
 See [**notebooks/primer_evaluation.ipynb**](./notebooks/primer_evaluation.ipynb) for sample results and an evaluation walkthrough.
+
+### Docker Support
+
+If you don’t want to install the dependencies on your system, you can run the pipeline inside a Docker container.  
+Fist, build the Docker image:
+
+    docker build -t primer-pipeline .
+
+Then, run the **ID search** step:
+
+    docker run --rm -v "$PWD":/app -w /app primer-pipeline python3 exploration.py
+
+Finally, the pipeline:
+
+    docker run --rm -v "$PWD":/app -w /app primer-pipeline snakemake --cores N
+
+The `--rm` flag deletes the container after execution. You can remove it if you want to explore the container afterward.
+
+> **Note:** Docker is optional. If your system already has the required tools (`clustalo`, `emboss`, `primer3_core`) and Python dependencies, you can use the pipeline directly.
 
 ### **.env** file and `email` environment variable
 Include a **.env** file in the root project directory with the following content: 
